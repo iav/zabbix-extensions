@@ -12,6 +12,8 @@
 	<use>
 		<flag name='flashcache'>Facebook Flashcache monitoring extension get stats from /proc.</flag>
 		<flag name='glusterfs-client'>Glusterfs client monitoring, auto-discovery and check mountpoints.</flag>
+		<flag name='iostat'>Disk statistics via iostat</flag>
+		<flag name='keepalived'>Keepalived virtual addresses monitoring via iproute.</flag>
 		<flag name='memcached'>Internal memcached stats through direct connection to the memcached.</flag>
 		<flag name='pgbouncer'>PgBouncer internal statistics.</flag>
 		<flag name='postfix'>Postfix mail queue.</flag>
@@ -19,6 +21,7 @@
 		<flag name='redis'>Redis internal stats and raw data from redis storage via redis-cli.</flag>
 		<flag name='sphinx2'>Sphinx2 internal statistics.</flag>
 		<flag name='skytools'>Skytools PGQ queues monitoring via psql.</flag>
+		<flag name='testcookie'>Don't use. Very specific extensions for nginx testcookie.</flag>
 		<flag name='unicorn'>Unicorn application memory usage, process and application reply.</flag>
 		<flag name='hwraid_adaptec'>Gathering Adaptec RAID controllers information via arcconf.</flag>
 		<flag name='hwraid_megacli'>Gathering RAID controllers information via MegaCLI.</flag>
