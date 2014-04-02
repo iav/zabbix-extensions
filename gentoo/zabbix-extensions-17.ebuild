@@ -217,7 +217,7 @@ src_install() {
 	fi
 
 	if use ruby-vines; then
-		insinto /etc/zabbix/zabbix_agent.d
+		insinto /etc/zabbix/zabbix_agentd.d
 		doins files/ruby-vines/ruby-vines.conf
 	fi
 
