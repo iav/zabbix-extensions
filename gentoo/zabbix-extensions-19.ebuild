@@ -7,7 +7,7 @@ inherit eutils
 
 DESCRIPTION="Zabbix additional monitoring modules"
 HOMEPAGE="https://github.com/DanteG41/zabbix-extensions"
-ZBX_EXT_GIT_SHA1="5a68d29"
+ZBX_EXT_GIT_SHA1="205346b"
 SRC_URI="https://github.com/DanteG41/zabbix-extensions/tarball/${ZBX_EXT_GIT_SHA1} -> ${P}.tar.gz"
 S="${WORKDIR}/DanteG41-${PN}-${ZBX_EXT_GIT_SHA1}"
 
@@ -15,7 +15,7 @@ LICENSE="as-is"
 SLOT="0"
 KEYWORDS="amd64 ~x86"
 IUSE="flashcache glusterfs-client iostat keepalived memcached pgbouncer postfix postgres redis
-sphinx2 skytools testcookie unicorn diskio smartmon"
+sphinx2 skytools testcookie unicorn diskio smartmon ruby-vines resque"
 
 HWRAID="adaptec smartarray megacli"
 
@@ -36,7 +36,8 @@ DEPEND=">=net-analyzer/zabbix-2.0.0
 		hwraid_smartarray? ( sys-block/hpacucli )
 		hwraid_megacli? ( sys-block/megacli )
 		unicorn? ( net-misc/curl )
-		smartmon? ( sys-apps/smartmontools )"
+		smartmon? ( sys-apps/smartmontools )
+		ruby-vines? ( dev-db/redis )"
 RDEPEND="${DEPEND}"
 
 src_install() {
@@ -50,7 +51,8 @@ src_install() {
 		files/linux/scripts/check-open-descriptors.sh \
 		files/linux/scripts/mem-usage.sh \
 		files/linux/scripts/swap.discovery.sh \
-		files/linux/scripts/check-netif-speed.sh
+		files/linux/scripts/check-netif-speed.sh \
+		files/linux/scripts/cave-pkg-discovery.sh
 
 	insinto /etc/cron.d
 	doins files/linux/zabbix.cron
@@ -117,6 +119,7 @@ src_install() {
 			files/postgresql/scripts/pgsql.relation.tuples.sh \
 			files/postgresql/scripts/pgsql.streaming.lag.sh \
 			files/postgresql/scripts/pgsql.transactions.sh \
+			files/postgresql/scripts/pgsql.transactions.long.sh \
 			files/postgresql/scripts/pgsql.uptime.sh \
 			files/postgresql/scripts/pgsql.trigger.sh \
 			files/postgresql/scripts/pgsql.wal.write.sh
@@ -212,6 +215,18 @@ src_install() {
 	if use smartmon; then
 		insinto /etc/zabbix/zabbix_agentd.d
 		doins files/smartmon/smartmon.conf
+	fi
+
+	if use ruby-vines; then
+		insinto /etc/zabbix/zabbix_agentd.d
+		doins files/ruby-vines/ruby-vines.conf
+	fi
+
+	if use resque; then
+		insinto /etc/zabbix/zabbix_agentd.d
+		doins files/resque/resque.conf
+		exeinto /usr/libexec/zabbix-extensions/scripts
+		doexe files/resque/scripts/old-resque-jobs.sh
 	fi
 
 }

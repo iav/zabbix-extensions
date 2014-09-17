@@ -2,8 +2,8 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
 	<maintainer>
-		<email>lesovsky@gmail.com</email>
-		<name>Lesovsky Alexey</name>
+		<email>danteg41@gmail.com</email>
+		<name>Mamedaliev Kirill</name>
 	</maintainer>
 	<longdescription lang="en">
 		Additional monitoring extensions that can extend the ZABBIX functionality.
