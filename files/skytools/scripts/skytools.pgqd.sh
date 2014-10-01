@@ -23,6 +23,9 @@ case "$PARAM" in
 'lag' )
         q="select extract(epoch from lag) from pgq.get_consumer_info() where queue_name = '$1'"
 ;;
+'max_lag' )
+        q="select extract(epoch from max(lag)) from pgq.get_consumer_info()"
+;;
 'last_seen' )
         q="select extract(epoch from last_seen) from pgq.get_consumer_info() where queue_name = '$1'"
 ;;
