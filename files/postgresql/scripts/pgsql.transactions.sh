@@ -23,6 +23,9 @@ case "$PARAM" in
 'active' )
 	query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE state <> 'idle in transaction' AND state <> 'idle'"
 ;;
+'active_without_autovacuum' )
+	query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE state <> 'idle in transaction' AND state <> 'idle' AND query NOT LIKE 'autovacuum:%'"
+;;
 'waiting' )
 	query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE waiting = 't'"
 ;;
