@@ -240,7 +240,7 @@ src_install() {
 
 	if use logstash; then
 		insinto /etc/zabbix/zabbix_agentd.d
-		doinst files/logstash/logstash.conf
+		doins files/logstash/logstash.conf
 		exeinto /usr/libexec/zabbix-extensions/scripts
 		doexe \
 		       	files/logstash/scripts/logstash.instance.discovery.sh \
