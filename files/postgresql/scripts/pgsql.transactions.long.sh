@@ -31,12 +31,36 @@ where xact_start < NOW() - interval '$PARAM minutes'
 order by NOW() - interval '$PARAM minutes' desc
 limit 1;"
 ;;
+'str_without_autovacuum' )
+query="
+select 
+ pid, 
+ usename, 
+ application_name, 
+ NOW() - xact_start, 
+ substr (query, 1, 100)
+from pg_stat_activity
+where xact_start < NOW() - interval '$PARAM minutes'
+AND query NOT LIKE 'autovacuum:%'
+order by NOW() - interval '$PARAM minutes' desc
+limit 1;"
+;;
 'time' )
 query="
 select 
  COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
 from pg_stat_activity
 where xact_start < NOW() - interval '$PARAM minutes'
+order by NOW() - interval '$PARAM minutes' desc
+limit 1;"
+;;
+'time_without_autovacuum' )
+query="
+select 
+ COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
+from pg_stat_activity
+where xact_start < NOW() - interval '$PARAM minutes'
+AND query NOT LIKE 'autovacuum:%'
 order by NOW() - interval '$PARAM minutes' desc
 limit 1;"
 ;;
