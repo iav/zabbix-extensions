@@ -2,7 +2,7 @@
 # Author:       Kirill Mamedaliev <danteg41@gmail.com>
 # Description:  Logstash instance auto-discovery
 
-insts=$(curl -s http://127.0.0.1:9200/_aliases?pretty=1|awk -F - '/-20/ {gsub("\"","",$1);print $1}'|sort|uniq)
+insts=$(/sbin/rc-service -l|/bin/grep -P "logstash\."|awk -F . '{print $2}')
 
 printf "{\n";
 printf "\t\"data\":[\n\n";
