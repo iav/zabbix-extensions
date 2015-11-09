@@ -35,5 +35,11 @@ case "$PARAM" in
 * ) echo ZBX_NOTSUPPORTED; exit 1;;
 esac
 
-r=$(psql -h localhost -p 5432 -tA -U "$username" "$dbname" -c "$q" |head -n 1)
-[[ -z "$r" ]] && echo 0 || echo $r
+r=$(psql -h localhost -p 5432 -tA -U "$username" "$dbname" -c "$q")
+exit_code=$?
+if [ $exit_code != 0 ]; then
+        printf "Error : [%d] when executing query '$q'\n" $exit_code
+        exit $exit_code
+else
+        [[ -z "$r" ]] && echo 0 || echo $r
+fi
