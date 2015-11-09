@@ -41,5 +41,5 @@ if [ $exit_code != 0 ]; then
         printf "Error : [%d] when executing query '$q'\n" $exit_code
         exit $exit_code
 else
-        [[ -z "$r" ]] && echo 0 || echo $r
+        [[ -z "$r" ]] && echo 0 || echo $r|head -n 1
 fi
