@@ -18,19 +18,19 @@ PARAM="$2"
 
 case "$PARAM" in
 'length' )
-        q="select pending_events from pgq.get_consumer_info() where queue_name = '$1'"
+        q="select max(pending_events) from pgq.get_consumer_info() where queue_name = '$1'"
 ;;
 'lag' )
-        q="select extract(epoch from lag) from pgq.get_consumer_info() where queue_name = '$1'"
+        q="select extract(epoch from max(lag)) from pgq.get_consumer_info() where queue_name = '$1'"
 ;;
 'max_lag' )
         q="select extract(epoch from max(lag)) from pgq.get_consumer_info()"
 ;;
 'last_seen' )
-        q="select extract(epoch from last_seen) from pgq.get_consumer_info() where queue_name = '$1'"
+        q="select extract(epoch from max(last_seen)) from pgq.get_consumer_info() where queue_name = '$1'"
 ;;
 'ev_per_sec' )
-        q="select ev_per_sec from pgq.get_queue_info() where queue_name = '$1'"
+        q="select max(ev_per_sec) from pgq.get_queue_info() where queue_name = '$1'"
 ;;
 * ) echo ZBX_NOTSUPPORTED; exit 1;;
 esac
