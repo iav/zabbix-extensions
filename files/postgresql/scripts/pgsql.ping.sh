@@ -14,4 +14,4 @@ if [ -z "$*" ];
 fi
 
 query="select 1;"
-echo -e "\\\timing \n select 1" | psql -qAtX -h localhost -U "$username" "$dbname" |grep Time |cut -d' ' -f2
+echo -e "\\\timing \n select 1" | psql -qAtX -h localhost -U "$username" "$dbname" |grep Time |cut -d' ' -f2|sed 's/,/./'
