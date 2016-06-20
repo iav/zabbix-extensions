@@ -7,15 +7,15 @@ inherit eutils
 
 DESCRIPTION="Zabbix additional monitoring modules"
 HOMEPAGE="https://github.com/DanteG41/zabbix-extensions"
-ZBX_EXT_GIT_SHA1="578ca36"
+ZBX_EXT_GIT_SHA1="f954b5c"
 SRC_URI="https://github.com/DanteG41/zabbix-extensions/tarball/${ZBX_EXT_GIT_SHA1} -> ${P}.tar.gz"
 S="${WORKDIR}/DanteG41-${PN}-${ZBX_EXT_GIT_SHA1}"
 
 LICENSE="as-is"
 SLOT="0"
 KEYWORDS="amd64 ~x86"
-IUSE="flashcache glusterfs-client iostat keepalived memcached pgbouncer postfix postgres redis
-sphinx2 skytools testcookie unicorn diskio smartmon ruby-vines"
+IUSE="asterisk flashcache glusterfs-client iostat keepalived memcached pgbouncer postfix postgres redis
+sphinx2 skytools testcookie unicorn diskio smartmon ruby-vines resque elasticsearch logstash"
 
 HWRAID="adaptec smartarray megacli"
 
@@ -27,17 +27,19 @@ DEPEND=">=net-analyzer/zabbix-2.0.0
 		app-admin/sudo
 		iostat? ( app-admin/sysstat )
 		keepalived? ( sys-apps/iproute2 )
-		pgbouncer? ( dev-db/postgresql-base )
-		postgres? ( dev-db/postgresql-base )
+		pgbouncer? ( dev-db/postgresql )
+		postgres? ( dev-db/postgresql )
 		redis? ( dev-db/redis )
 		sphinx2? ( dev-db/mysql )
-		skytools? ( dev-db/postgresql-base )
+		skytools? ( dev-db/postgresql )
 		hwraid_adaptec? ( sys-block/arcconf )
 		hwraid_smartarray? ( sys-block/hpacucli )
 		hwraid_megacli? ( sys-block/megacli )
 		unicorn? ( net-misc/curl )
 		smartmon? ( sys-apps/smartmontools )
-		ruby-vines? ( dev-db/redis )"
+		ruby-vines? ( dev-db/redis )
+		elasticsearch? ( net-misc/curl )
+		logstash? ( net-misc/curl )"
 RDEPEND="${DEPEND}"
 
 src_install() {
@@ -61,6 +63,14 @@ src_install() {
 	newins files/linux/zabbix.sudo zabbix
 	fperms 0440 /etc/sudoers.d/zabbix
 
+	if use asterisk; then
+		insinto /etc/zabbix/zabbix_agentd.d
+		doins files/asterisk/asterisk.conf
+		exeinto /usr/libexec/zabbix-extensions/scripts
+		doexe \
+			files/asterisk/scripts/asterisk-uplink-discovery.sh
+	fi
+
 	if use iostat; then
 		insinto /etc/zabbix/zabbix_agentd.d
 		doins files/iostat/iostat.conf
@@ -77,12 +87,12 @@ src_install() {
 			files/keepalived/scripts/keepalived.addr.availability.sh
 	fi
 
-	if use redis; then 
+	if use redis; then
 		insinto /etc/zabbix/zabbix_agentd.d
 	    doins files/redis/redis.conf
 	fi
 
-	if use memcached; then 
+	if use memcached; then
 		insinto /etc/zabbix/zabbix_agentd.d
 	    doins files/memcached/memcached.conf
 	fi
@@ -96,7 +106,7 @@ src_install() {
 			files/pgbouncer/scripts/pgbouncer.stat.sh
 	fi
 
-	if use postfix; then 
+	if use postfix; then
 		insinto /etc/zabbix/zabbix_agentd.d
 	    doins files/postfix/postfix.conf
 	fi
@@ -119,9 +129,12 @@ src_install() {
 			files/postgresql/scripts/pgsql.relation.tuples.sh \
 			files/postgresql/scripts/pgsql.streaming.lag.sh \
 			files/postgresql/scripts/pgsql.transactions.sh \
+			files/postgresql/scripts/pgsql.transactions.long.sh \
 			files/postgresql/scripts/pgsql.uptime.sh \
 			files/postgresql/scripts/pgsql.trigger.sh \
-			files/postgresql/scripts/pgsql.wal.write.sh
+			files/postgresql/scripts/pgsql.wal.write.sh \
+			files/postgresql/scripts/pgsql.denorm.field.discovery.sh \
+			files/postgresql/scripts/pgsql.denorm.field.stat.sh
 	fi
 
 	if use glusterfs-client; then
@@ -185,7 +198,7 @@ src_install() {
 		insinto /etc/cron.d
 		doins files/hwraid-smartarray/zabbix.smartarray
 	fi
-	
+
 	if use hwraid_megacli; then
 		insinto /etc/zabbix/zabbix_agentd.d
 		doins files/hwraid-megacli/megacli.conf
@@ -201,8 +214,8 @@ src_install() {
 
 	if use unicorn; then
 		insinto /etc/zabbix/zabbix_agentd.d
-        doins files/unicorn/unicorn.conf
-    fi
+	        doins files/unicorn/unicorn.conf
+	fi
 
 	if use diskio; then
 		insinto /etc/zabbix/zabbix_agentd.d
@@ -221,11 +234,35 @@ src_install() {
 		doins files/ruby-vines/ruby-vines.conf
 	fi
 
+	if use resque; then
+		insinto /etc/zabbix/zabbix_agentd.d
+		doins files/resque/resque.conf
+		exeinto /usr/libexec/zabbix-extensions/scripts
+		doexe files/resque/scripts/old-resque-jobs.sh
+	fi
+
+	if use elasticsearch; then
+		insinto /etc/zabbix/zabbix_agentd.d
+		doins files/elasticsearch/elasticsearch.conf
+		exeinto /usr/libexec/zabbix-extensions/scripts
+		doexe files/elasticsearch/scripts/elastic.memory.use.sh
+	fi
+
+	if use logstash; then
+		insinto /etc/zabbix/zabbix_agentd.d
+		doins files/logstash/logstash.conf
+		exeinto /usr/libexec/zabbix-extensions/scripts
+		doexe \
+			files/logstash/scripts/logstash.instance.discovery.sh \
+			files/logstash/scripts/logstash.memory.use.sh
+	fi
+
+
 }
 
 pkg_postinst() {
 	if use postgres || use skytools ; then
-		elog 
+		elog
 		elog "For PostgreSQL or Skytools monitoring need setup md5 auth with .pgpass for zabbix user."
 		elog "For example:"
 		elog "# echo 'localhost:5432:app_db:app_role:app_pass' > ~zabbix/.pgpass"
