@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #  Author: Vadim Cherepanov
-#  Description: Comparation between quantity of indices loaded into MySQL and count of its in sphinx.conf. 
+#  Description: Comparation between quantity of indices loaded into MySQL and count of its in sphinx.conf.
 #
 
 RESULT=0
@@ -16,7 +16,7 @@ for instance in $PIDS;
   do
     cmd=$(ps -o cmd= -p $instance)
     config=$(awk '{print $2}' <<< `getopt -u -q --long config: ${cmd}`)
-    
+
     MYSQL_HOST=$(awk -F[:=] '!/^(\s|\t)*#/&&/^(\s|\t)*listen.*mysql41/ {gsub(" ","", $0); print $2; matchs=1}; END {if (matchs!=1) exit 1}' $config) \
     || failed "ZBX_NOTSUPPORTED" $?
     MYSQL_PORT=$(awk -F[:=] '!/^(\s|\t)*#/&&/^(\s|\t)*listen.*mysql41/ {gsub(" ","", $0); print $3; matchs=1}; END {if (matchs!=1) exit 1}' $config) \
@@ -27,7 +27,7 @@ for instance in $PIDS;
     || failed "ZBX_NOTSUPPORTED" $?
     RESULT=$[ $COUNT_CONF - $COUNT_MYSQL ]
 
-    if [[ ${RESULT} -gt 0 ]]; then 
+    if [[ ${RESULT} -gt 0 ]]; then
       echo ${RESULT}
       exit 0
     fi
