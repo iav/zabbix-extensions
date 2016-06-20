@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-#  Comparation between quantity of indexes loaded into MySQL and count of its in sphinx.conf. 
+#  Author: Vadim Cherepanov
+#  Description: Comparation between quantity of indices loaded into MySQL and count of its in sphinx.conf. 
 #
 
 RESULT=0
