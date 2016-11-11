@@ -7,7 +7,7 @@ inherit eutils
 
 DESCRIPTION="Zabbix additional monitoring modules"
 HOMEPAGE="https://github.com/DanteG41/zabbix-extensions"
-ZBX_EXT_GIT_SHA1="338f587"
+ZBX_EXT_GIT_SHA1="f72e1e0"
 SRC_URI="https://github.com/DanteG41/zabbix-extensions/tarball/${ZBX_EXT_GIT_SHA1} -> ${P}.tar.gz"
 S="${WORKDIR}/DanteG41-${PN}-${ZBX_EXT_GIT_SHA1}"
 
@@ -54,7 +54,8 @@ src_install() {
 		files/linux/scripts/mem-usage.sh \
 		files/linux/scripts/swap.discovery.sh \
 		files/linux/scripts/check-netif-speed.sh \
-		files/linux/scripts/cave-pkg-discovery.sh
+		files/linux/scripts/cave-pkg-discovery.sh \
+		files/linux/scripts/check-oom.awk
 
 	insinto /etc/cron.d
 	doins files/linux/zabbix.cron
