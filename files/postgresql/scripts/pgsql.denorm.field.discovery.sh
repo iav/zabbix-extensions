@@ -13,7 +13,7 @@ if [ -z "$*" ];
     dbname="$1"
 fi
 
-fields=$(psql -h localhost -U $username -tl --dbname=$dbname -c "SELECT title FROM denormalization.fields;")
+fields=$(psql -h localhost -U $username -t --dbname=$dbname -c "SELECT title FROM denormalization.fields;")
 exit_code=$?
 
 if [ $exit_code != 0 ]; then
