@@ -13,7 +13,7 @@ if [ -z "$*" ];
     dbname="$1"
 fi
 
-dblist=$(psql -h localhost -U $username -tl --dbname=$dbname -c "SELECT datname FROM pg_database WHERE datistemplate IS FALSE AND datallowconn IS TRUE AND datname!='postgres';")
+dblist=$(psql -h localhost -U $username -t --dbname=$dbname -c "SELECT datname FROM pg_database WHERE datistemplate IS FALSE AND datallowconn IS TRUE AND datname!='postgres';")
 
 printf "{\n";
 printf "\t\"data\":[\n\n";
