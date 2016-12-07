@@ -110,6 +110,52 @@ AND query NOT LIKE 'autovacuum:%'
 order by NOW() - interval '$PARAM minutes' desc
 limit 1;"
 ;;
+'str_wait_event' )
+query="
+select 
+ pid, 
+ usename, 
+ application_name, 
+ NOW() - xact_start, 
+ substr (query, 1, 100)
+from pg_stat_activity
+WHERE wait_event IS NOT NULL
+order by NOW() - interval '$PARAM minutes' desc
+limit 1;"
+;;
+'str_wait_event_without_autovacuum' )
+query="
+select 
+ pid, 
+ usename, 
+ application_name, 
+ NOW() - xact_start, 
+ substr (query, 1, 100)
+from pg_stat_activity
+WHERE wait_event IS NOT NULL
+AND query NOT LIKE 'autovacuum:%'
+order by NOW() - interval '$PARAM minutes' desc
+limit 1;"
+;;
+'time_wait_event' )
+query="
+select 
+ COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
+from pg_stat_activity
+WHERE wait_event IS NOT NULL
+order by NOW() - interval '$PARAM minutes' desc
+limit 1;"
+;;
+'time_wait_event_without_autovacuum' )
+query="
+select 
+ COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), xact_start))), 0) as d
+from pg_stat_activity
+WHERE wait_event IS NOT NULL
+AND query NOT LIKE 'autovacuum:%'
+order by NOW() - interval '$PARAM minutes' desc
+limit 1;"
+;;
 '*' ) echo "ZBX_NOTSUPPORTED";exit 1;;
 esac
 resp=$(psql -qAtX -F"|" -c "$query" -h localhost -U "$username" "$dbname")
