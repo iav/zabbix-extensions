@@ -32,6 +32,12 @@ case "$PARAM" in
 'waiting_without_autovacuum' )
         query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE waiting = 't' AND query NOT LIKE 'autovacuum:%'"
 ;;
+'waiting_event' )
+        query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE wait_event IS NOT NULL"
+;;
+'waiting_event_without_autovacuum' )
+        query="SELECT COALESCE(EXTRACT (EPOCH FROM MAX(age(NOW(), query_start))), 0) as d FROM pg_stat_activity WHERE wait_event IS NOT NULL AND query NOT LIKE 'autovacuum:%'"
+;;
 'pending_xa_count' )
 	query="SELECT count(*) FROM pg_prepared_xacts where COALESCE(EXTRACT (EPOCH FROM age(NOW(), prepared)), 0) > 1000;"
 ;;
