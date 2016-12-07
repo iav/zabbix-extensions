@@ -31,6 +31,9 @@ case "$PARAM" in
 'waiting' )
         query="SELECT COUNT(*) FROM pg_stat_activity WHERE waiting <> 'f';"
 ;;
+'waiting_event' )
+        query="SELECT COUNT(*) FROM pg_stat_activity WHERE wait_event IS NOT NULL;"
+;;
 'total_pct' )
         query="select count(*)*100/(select (setting::int) from pg_settings where name = 'max_connections') from pg_stat_activity;"
 ;;
