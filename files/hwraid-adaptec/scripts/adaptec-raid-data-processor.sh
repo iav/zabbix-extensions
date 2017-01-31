@@ -9,11 +9,11 @@ arcconf=$(which arcconf)
 data_tmp="/run/adaptec-raid-data-harvester.tmp"
 data_out="/run/adaptec-raid-data-harvester.out"
 all_keys='/run/keys'
-zbx_server=$(grep Server /etc/zabbix/zabbix_agentd.conf |cut -d= -f2|cut -d, -f1)
 zbx_data='/run/zabbix-sender-adaptec-raid-data.in'
 adp_list=$(/usr/libexec/zabbix-extensions/scripts/adaptec-adp-discovery.sh raw)
 ld_list=$(/usr/libexec/zabbix-extensions/scripts/adaptec-ld-discovery.sh raw)
 pd_list=$(/usr/libexec/zabbix-extensions/scripts/adaptec-pd-discovery.sh raw)
+ZBX_CONFIG="/etc/zabbix/zabbix_agentd.conf"
 
 echo -n > $data_tmp
 
@@ -122,4 +122,4 @@ cat $all_keys | while read key; do
   fi
 done
 
-zabbix_sender -z $zbx_server -i $zbx_data &> /dev/null
+zabbix_sender -c $ZBX_CONFIG -i $zbx_data &> /dev/null

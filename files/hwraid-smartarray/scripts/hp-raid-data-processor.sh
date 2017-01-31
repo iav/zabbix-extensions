@@ -9,9 +9,9 @@ hpacucli=$(which hpacucli)
 data_tmp="/tmp/hp-raid-data-harvester.tmp"
 data_out="/tmp/hp-raid-data-harvester.out"
 all_keys='/tmp/keys'
-zbx_server=$(grep Server /etc/zabbix/zabbix_agentd.conf |cut -d= -f2 |cut -d, -f1)
 zbx_data='/tmp/zabbix-sender-hp-raid-data.in'
 ctrl_list=$(${hpacucli} ctrl all show |grep -oE 'Slot [0-9]+' |awk '{print $2}' |xargs echo)
+ZBX_CONFIG="/etc/zabbix/zabbix_agentd.conf"
 
 echo -n > $data_tmp
 
@@ -116,4 +116,4 @@ cat $all_keys | while read key; do
   done
 
 # send data to zabbix server
-zabbix_sender -z $zbx_server -i $zbx_data &> /dev/null
+zabbix_sender -c $ZBX_CONFIG -i $zbx_data &> /dev/null
