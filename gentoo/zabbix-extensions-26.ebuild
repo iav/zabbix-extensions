@@ -15,7 +15,7 @@ LICENSE="as-is"
 SLOT="0"
 KEYWORDS="amd64 ~x86"
 IUSE="asterisk flashcache dmcache glusterfs-client iostat keepalived memcached pgbouncer postfix postgres redis
-sphinx2 skytools testcookie unicorn diskio smartmon ruby-vines resque elasticsearch logstash"
+sphinx2 skytools testcookie unicorn diskio smartmon ruby-vines resque elasticsearch logstash docker"
 
 HWRAID="adaptec smartarray megacli"
 
@@ -39,7 +39,8 @@ DEPEND=">=net-analyzer/zabbix-2.0.0
 		smartmon? ( sys-apps/smartmontools )
 		ruby-vines? ( dev-db/redis )
 		elasticsearch? ( net-misc/curl )
-		logstash? ( net-misc/curl )"
+		logstash? ( net-misc/curl )
+		docker? ( app-emulation/docker )" 
 RDEPEND="${DEPEND}"
 
 src_install() {
@@ -268,6 +269,15 @@ src_install() {
 		doexe \
 			files/logstash/scripts/logstash.instance.discovery.sh \
 			files/logstash/scripts/logstash.memory.use.sh
+	fi
+
+	if use docker; then
+		insinto /etc/zabbix/zabbix_agentd.d
+		doins files/docker/docker.conf
+		exeinto /usr/libexec/zabbix-extensions/scripts
+		doexe \
+			files/docker/scripts/docker-container-discovery.sh \
+			files/docker/scripts/docker-container-status.sh
 	fi
 
 
