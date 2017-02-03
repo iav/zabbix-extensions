@@ -7,6 +7,7 @@ pd_list=$(for a in $adp_list;
             do
               sudo arcconf getconfig 1 pd |grep -B1 -w "Device is a Hard drive" |grep -wE "Device.*[0-9]+" |cut -d# -f2 |awk -v adp=$a '{print adp":"$1}' 
             done)
+first=1
 
 if [[ $1 = raw ]]; then
   for pd in ${pd_list}; do echo $pd; done ; exit 0
@@ -17,9 +18,11 @@ printf "\t\"data\":[\n\n";
 
 for pd in ${pd_list}
 do
+    [ $first != 1 ] && printf ",\n";
+    first=0;
     printf "\t{\n";
     printf "\t\t\"{#PD}\":\"$pd\"\n";
-    printf "\t},\n";
+    printf "\t}";
 done
 
 printf "\n\t]\n";

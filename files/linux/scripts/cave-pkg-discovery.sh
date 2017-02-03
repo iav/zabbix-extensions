@@ -1,16 +1,20 @@
 #!/bin/bash
 #Zabbix cave.pkg.discovery implementation
-POSITION=1
-echo "{"
-echo " \"data\":["
-/usr/bin/cave-report.sh|tail -n +2|while read STPKG PKG;do
-   if [ $POSITION -gt 1 ]
-      then
-       echo ","
-   fi
-echo -n " { \"{#PKGNAME}\": \"$PKG\"}"
-POSITION=$[POSITION+1]
+
+PACKAGELIST=$(awk 'NR != 1 {print $2"-"$3}' <(/usr/bin/cave-report.sh))
+first=1
+
+printf "{\n";
+printf "\t\"data\":[\n\n";
+
+for package in ${PACKAGELIST}
+do
+    [ $first != 1 ] && printf ",\n";
+    first=0;
+    printf "\t{\n";
+    printf "\t\t\"{#PKGNAME}\":\"${package}\"\n";
+    printf "\t}";
 done
-echo ""
-echo " ]"
-echo "}"
+
+printf "\n\t]\n";
+printf "}\n";

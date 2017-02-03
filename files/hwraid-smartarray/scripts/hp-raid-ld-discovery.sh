@@ -3,6 +3,7 @@
 # Descriprion:  Low-level discovery for HP Smart Array logical volumes
 
 data="/tmp/hp-raid-data-harvester.out"
+first=1
 
 if [ -f $data ]; then
   ld_list=$(sed -n -e '/ld section begin/,/ld section end/p' $data |grep -w 'ld begin' |awk '{OFS=":"} {print $4,$5}')
@@ -18,9 +19,11 @@ printf "\t\"data\":[\n\n";
 
 for line in ${ld_list}
 do
+    [ $first != 1 ] && printf ",\n";
+    first=0;
     printf "\t{\n";
     printf "\t\t\"{#LD}\":\"$line\"\n";
-    printf "\t},\n";
+    printf "\t}";
 done
 
 printf "\n\t]\n";

@@ -1,16 +1,20 @@
 #!/bin/bash
 #Zabbix asterisk uplinks discovery implementation
-POSITION=1
-echo "{"
-echo " \"data\":["
-sudo /usr/sbin/asterisk -x 'sip show peers' | grep -v '^Name\|^Asterisk\|offline]$\|\<D\>' | cut -d ' ' -f1| while read UPLINK;do
-   if [ $POSITION -gt 1 ]
-      then
-       echo ","
-   fi
-echo -n " { \"{#UPLINK}\": \"$UPLINK\"}"
-POSITION=$[POSITION+1]
+
+UPLINKS=$(awk '!/(^Name|^Asterisk|offline]$|\<D\>)/ {print $1}' <(sudo /usr/sbin/asterisk -x 'sip show peers'))
+first=1
+
+printf "{\n";
+printf "\t\"data\":[\n\n";
+
+for uplink in ${UPLINKS}
+do
+    [ $first != 1 ] && printf ",\n";
+    first=0;
+    printf "\t{\n";
+    printf "\t\t\"{#UPLINK}\":\"${uplink}\"\n";
+    printf "\t}";
 done
-echo ""
-echo " ]"
-echo "}"
+
+printf "\n\t]\n";
+printf "}\n";

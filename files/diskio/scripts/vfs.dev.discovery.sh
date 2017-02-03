@@ -1,19 +1,21 @@
 #!/bin/bash
 #Zabbix vfs.dev.discovery implementation
-DEVS=`grep -E -v "major|^$|loop" /proc/partitions | awk '{print $4}'`
-POSITION=1
-echo "{"
-echo " \"data\":["
-for DEV in $DEVS
+
+DEVS=$(awk '!/(loop|^$|sr[0-9]+)/ && NR!=1 {print$4}' /proc/partitions)
+first=1
+
+printf "{\n";
+printf "\t\"data\":[\n\n";
+
+for DEV in ${DEVS}
 do
-   if [ $POSITION -gt 1 ]
-     then
-       echo ","
-   fi
- echo  " { \"{#DEVNAME}\": \"$DEV\","
- echo -n "  \"{#DEVMOUNT}\": \"`lsblk |grep $DEV|awk '{print $8}'`\"}"
- POSITION=$[POSITION+1]
+    [ $first != 1 ] && printf ",\n";
+    first=0;
+    printf "\t{\n";
+    printf "\t\t\"{#DEVNAME}\":\"${DEV}\",\n";
+    printf "\t\t\"{#DEVMOUNT}\":\"$(lsblk -dno MOUNTPOINT /dev/${DEV})\"\n";
+    printf "\t}";
 done
-echo ""
-echo " ]"
-echo "}"
+
+printf "\n\t]\n";
+printf "}\n";

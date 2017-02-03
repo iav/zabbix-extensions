@@ -3,16 +3,18 @@
 # Description:  Logstash instance auto-discovery
 
 insts=$(curl -s http://127.0.0.1:9200/_aliases?pretty=1|awk -F - '/-20/ {gsub("\"","",$1);print $1}'|sort|uniq)
-
+first=1
 
 printf "{\n";
 printf "\t\"data\":[\n\n";
 
 for inst in ${insts}
 do
+    [ $first != 1 ] && printf ",\n";
+    first=0;
     printf "\t{\n";
     printf "\t\t\"{#INDEX}\":\"$inst\"\n";
-    printf "\t},\n";
+    printf "\t}";
 done
 
 printf "\n\t]\n";

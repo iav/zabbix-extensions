@@ -11,7 +11,7 @@ printf "\t\"data\":[\n\n";
 
 printf "\t{\n";
 printf "\t\t\"{#SWAP_EXISTS}\":\"$line\"\n";
-printf "\t},\n";
+printf "\t}\n";
 
 printf "\n\t]\n";
 printf "}\n";

@@ -3,6 +3,7 @@
 # Description:	PGQ queues auto-discovery
 
 username=$(head -n 1 ~zabbix/.pgpass |cut -d: -f4)
+first=1
 
 #если имя базы не получено от сервера, то имя берется из ~zabbix/.pgpass
 if [ -z "$*" ]; 
@@ -21,9 +22,11 @@ printf "\t\"data\":[\n\n";
 
 for queue in ${queuelist}
 do
+    [ $first != 1 ] && printf ",\n";
+    first=0;
     printf "\t{\n";
     printf "\t\t\"{#QNAME}\":\"$queue\"\n";
-    printf "\t},\n";
+    printf "\t}";
 done
 
 printf "\n\t]\n";
