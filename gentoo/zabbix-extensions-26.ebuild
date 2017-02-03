@@ -7,7 +7,7 @@ inherit eutils
 
 DESCRIPTION="Zabbix additional monitoring modules"
 HOMEPAGE="https://github.com/DanteG41/zabbix-extensions"
-ZBX_EXT_GIT_SHA1="f72e1e0"
+ZBX_EXT_GIT_SHA1="a0da70a"
 SRC_URI="https://github.com/DanteG41/zabbix-extensions/tarball/${ZBX_EXT_GIT_SHA1} -> ${P}.tar.gz"
 S="${WORKDIR}/DanteG41-${PN}-${ZBX_EXT_GIT_SHA1}"
 
@@ -40,7 +40,7 @@ DEPEND=">=net-analyzer/zabbix-2.0.0
 		ruby-vines? ( dev-db/redis )
 		elasticsearch? ( net-misc/curl )
 		logstash? ( net-misc/curl )
-		docker? ( app-emulation/docker )" 
+		docker? ( app-emulation/docker )"
 RDEPEND="${DEPEND}"
 
 src_install() {
